@@ -3,7 +3,6 @@ const path = require("path");
 const fs = require("fs");
 const axios = require("axios").default;
 
-const POLYGLOT_API_ORIGIN = "http://localhost:3000";
 const DEFAULT_CONFIG = {
   username: "",
   password: "",
@@ -11,11 +10,13 @@ const DEFAULT_CONFIG = {
   targetBranch: "master"
 };
 
-async function updateDefault(polyglotConfig) {
-  console.log(__dirname, 'dirname')
+async function updateDefault(polyglotConfig, isDev, useDevApi) {
+  const POLYGLOT_API_ORIGIN = useDevApi ? "http://localhost:3000" : 'https://api-polyglot.gaspardbruno.com';
+  // * Use yarn link with --dev
+  const RELATIVE_PATH = isDev ? "../" : "../../..";
   const configFileExists = fs.existsSync(polyglotConfig);
   if (configFileExists) {
-    const configPath = path.join("../../..", polyglotConfig);
+    const configPath = path.join(RELATIVE_PATH, polyglotConfig);
     const CONFIG = await require(configPath).default;
 
     const {
@@ -24,7 +25,7 @@ async function updateDefault(polyglotConfig) {
       password = DEFAULT_CONFIG.password,
       targetBranch = DEFAULT_CONFIG.targetBranch
     } = CONFIG;
-    const pathToDefaultPhrases = path.join("../../..", pathToDefault);
+    const pathToDefaultPhrases = path.join(RELATIVE_PATH, pathToDefault);
     const DEFAULT_PHRASES = await require(pathToDefaultPhrases);
 
     const client = axios.create({
@@ -71,7 +72,7 @@ async function updateDefault(polyglotConfig) {
           })
           .then(() => {
             console.log(
-              chalk.green("Updated default phrases with ", pathToDefault)
+              chalk.green("Updated default phrases with", pathToDefault)
             );
           })
           .catch(e => {

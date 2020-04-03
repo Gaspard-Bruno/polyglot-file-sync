@@ -2,10 +2,10 @@
   "name": "polyglot-file-sync",
   "version": "1.0.0",
   "description": "A script to sync translation files with Polyglot API",
-  "main": "src/index.js",
+  "main": "bin/polyglot-file-sync.js",
   "scripts": {
     "start": "bin/polyglot-file-sync.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "bin/polyglot-file-sync.js --dev --dev-server --config ./example/example.config.js"
   },
   "bin": "bin/polyglot-file-sync.js",
   "repository": {
