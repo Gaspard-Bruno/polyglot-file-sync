@@ -1,0 +1,39 @@
+{
+  "name": "polyglot-file-sync",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "bin/polyglot-file-sync.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": "bin/polyglot-file-sync.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gaspard-Bruno/polyglot-file-sync.git"
+  },
+  "keywords": [
+    "polygot"
+  ],
+  "author": "Gaspard+Bruno",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Gaspard-Bruno/polyglot-file-sync/issues"
+  },
+  "homepage": "https://github.com/Gaspard-Bruno/polyglot-file-sync#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "chalk": "^4.0.0",
+    "esm": "^3.2.25",
+    "git-branch-is": "^3.1.0",
+    "immer": "^6.0.2",
+    "node-polyglot": "^2.4.0",
+    "react-redux": "^7.2.0",
+    "reselect": "^4.0.0",
+    "yargs": "^15.3.1"
+  },
+  "peerDependencies": {
+    "react": "^16.13.0",
+    "redux": "^4.0.5"
+  }
+}
