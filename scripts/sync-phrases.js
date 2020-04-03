@@ -12,9 +12,10 @@ const DEFAULT_CONFIG = {
 };
 
 async function updateDefault(polyglotConfig) {
+  console.log(__dirname, 'dirname')
   const configFileExists = fs.existsSync(polyglotConfig);
   if (configFileExists) {
-    const configPath = path.join("../..", polyglotConfig);
+    const configPath = path.join("../../..", polyglotConfig);
     const CONFIG = await require(configPath).default;
 
     const {
@@ -23,7 +24,7 @@ async function updateDefault(polyglotConfig) {
       password = DEFAULT_CONFIG.password,
       targetBranch = DEFAULT_CONFIG.targetBranch
     } = CONFIG;
-    const pathToDefaultPhrases = path.join("../..", pathToDefault);
+    const pathToDefaultPhrases = path.join("../../..", pathToDefault);
     const DEFAULT_PHRASES = await require(pathToDefaultPhrases);
 
     const client = axios.create({
