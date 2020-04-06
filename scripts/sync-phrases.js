@@ -8,6 +8,7 @@ const DEFAULT_CONFIG = {
   password: "",
   pathToDefault: "",
   targetBranch: "master",
+  defaultLanguage: null,
   projectId: null,
 };
 
@@ -28,6 +29,7 @@ async function updateDefault(polyglotConfig, isDev, useDevApi) {
       password = DEFAULT_CONFIG.password,
       targetBranch = DEFAULT_CONFIG.targetBranch,
       projectId = DEFAULT_CONFIG.projectId,
+      defaultLanguage = DEFAULT_CONFIG.defaultLanguage,
     } = CONFIG;
     const pathToDefaultPhrases = path.join(RELATIVE_PATH, pathToDefault);
     const DEFAULT_PHRASES = await require(pathToDefaultPhrases).default;
@@ -74,11 +76,13 @@ async function updateDefault(polyglotConfig, isDev, useDevApi) {
             .patch("api/localized_strings/update_default", {
               localized_string: {
                 project_id: projectId,
-                default_strings: DEFAULT_PHRASES,
               },
+              default_language: defaultLanguage,
+              default_strings: DEFAULT_PHRASES,
             })
             .then(() => {
               console.log(
+
                 chalk.green("Updated default phrases with", pathToDefault)
               );
             })

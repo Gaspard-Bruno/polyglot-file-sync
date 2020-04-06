@@ -17,6 +17,7 @@ export default {
   username: 'user@gmail.com',
   password: "123123123",
   projectId: 1,
+  defaultLanguage: 'en',
   pathToDefault: 'utils/phrases.js',
   targetBranch: 'master'
 }
@@ -59,6 +60,8 @@ An example configuration can be found in the `examples` directory. Here's the cu
   - Path to the translation file **from the project root**
 - `projectId` (*required*)
   - Your polyglot project ID
+- `defaultLanguage` (*defaults to first language in Polyglot API*)
+  - The language your default translations should be applied to
 - `targetBranch` (*defaults to `master`*)
   - Target branch, for usage with hooks. Ensures only changes made to this branch are synced with Polyglot API
 ## License
