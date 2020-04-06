@@ -16,6 +16,7 @@ After installing the package you need to have a `config` file which should be pa
 export default {
   username: 'user@gmail.com',
   password: "123123123",
+  projectId: 1,
   pathToDefault: 'utils/phrases.js',
   targetBranch: 'master'
 }
@@ -56,6 +57,8 @@ An example configuration can be found in the `examples` directory. Here's the cu
   - Your Polyglot password, required to authenticate.
 - `pathToDefault` (*required*)
   - Path to the translation file **from the project root**
+- `projectId` (*required*)
+  - Your polyglot project ID
 - `targetBranch` (*defaults to `master`*)
   - Target branch, for usage with hooks. Ensures only changes made to this branch are synced with Polyglot API
 ## License

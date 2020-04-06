@@ -2,7 +2,7 @@ export default {
   username: 'user@gmail.com',
   password: "123123123",
   // apiKey: '5435vfds',
-  // projectId: 0,
+  projectId: 1,
   pathToDefault: 'example/example.phrases.js',
   targetBranch: 'master'
 }

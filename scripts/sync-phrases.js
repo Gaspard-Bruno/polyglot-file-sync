@@ -7,11 +7,14 @@ const DEFAULT_CONFIG = {
   username: "",
   password: "",
   pathToDefault: "",
-  targetBranch: "master"
+  targetBranch: "master",
+  projectId: null,
 };
 
 async function updateDefault(polyglotConfig, isDev, useDevApi) {
-  const POLYGLOT_API_ORIGIN = useDevApi ? "http://localhost:3000" : 'https://api-polyglot.gaspardbruno.com';
+  const POLYGLOT_API_ORIGIN = useDevApi
+    ? "http://localhost:3000"
+    : "https://api-polyglot.gaspardbruno.com";
   // * Use yarn link with --dev
   const RELATIVE_PATH = isDev ? "../" : "../../..";
   const configFileExists = fs.existsSync(polyglotConfig);
@@ -23,80 +26,89 @@ async function updateDefault(polyglotConfig, isDev, useDevApi) {
       pathToDefault = DEFAULT_CONFIG.pathToDefault,
       username = DEFAULT_CONFIG.username,
       password = DEFAULT_CONFIG.password,
-      targetBranch = DEFAULT_CONFIG.targetBranch
+      targetBranch = DEFAULT_CONFIG.targetBranch,
+      projectId = DEFAULT_CONFIG.projectId,
     } = CONFIG;
     const pathToDefaultPhrases = path.join(RELATIVE_PATH, pathToDefault);
-    const DEFAULT_PHRASES = await require(pathToDefaultPhrases);
+    const DEFAULT_PHRASES = await require(pathToDefaultPhrases).default;
+    if (projectId || projectId === 0) {
+      const client = axios.create({
+        baseURL: POLYGLOT_API_ORIGIN,
+        timeout: 1000,
+        headers: { "Content-Type": "application/json" },
+      });
 
-    const client = axios.create({
-      baseURL: POLYGLOT_API_ORIGIN,
-      timeout: 1000,
-      headers: { "Content-Type": "application/json" }
-    });
-
-    function authenticateUser() {
-      if (username && password) {
-        client
-          .post("api/sign_in", {
-            user: {
-              email: username,
-              password
-            }
-          })
-          .then(data => {
-            const AUTH_TOKEN = data.headers.authorization;
-            client.defaults.headers.common["Authorization"] = AUTH_TOKEN;
-            console.log(
-              chalk.blue("Authenticated successfully with polyglot api")
-            );
-            updateDefaultStrings();
-          })
-          .catch(e => {
-            console.log(
-              chalk.red(
-                "An error has ocurred while authenticating with polyglot"
-              )
-            );
-            console.log(chalk.red(e.message));
-          });
-      } else {
-        console.log(chalk.red("username or password not set in config"));
+      function authenticateUser() {
+        if (username && password) {
+          client
+            .post("api/sign_in", {
+              user: {
+                email: username,
+                password,
+              },
+            })
+            .then((data) => {
+              const AUTH_TOKEN = data.headers.authorization;
+              client.defaults.headers.common["Authorization"] = AUTH_TOKEN;
+              console.log(
+                chalk.blue("Authenticated successfully with polyglot api")
+              );
+              updateDefaultStrings();
+            })
+            .catch((e) => {
+              console.log(
+                chalk.red(
+                  "An error has ocurred while authenticating with polyglot"
+                )
+              );
+              console.log(chalk.red(e.message));
+            });
+        } else {
+          console.log(chalk.red("username or password not set in config"));
+        }
       }
+
+      function updateDefaultStrings() {
+        if (DEFAULT_PHRASES) {
+          client
+            .patch("api/localized_strings/update_default", {
+              localized_string: {
+                project_id: projectId,
+                default_strings: DEFAULT_PHRASES,
+              },
+            })
+            .then(() => {
+              console.log(
+                chalk.green("Updated default phrases with", pathToDefault)
+              );
+            })
+            .catch((e) => {
+              console.log(
+                chalk.red(
+                  "An error has ocurred while updating your default phrases"
+                )
+              );
+              console.log(chalk.red(e.message));
+            });
+        }
+      }
+      const gitBranchIs = require("git-branch-is");
+      gitBranchIs(targetBranch).then((isTargetBranch) => {
+        if (isTargetBranch) {
+          authenticateUser();
+        } else {
+          console.log(
+            chalk.blue(
+              "Skipped update to defaultPhrases because not currently on target branch"
+            )
+          );
+        }
+      });
+    } else {
+      console.log(
+        chalk.red("No project ID was found in your configuration file.")
+      );
     }
-
-    function updateDefaultStrings() {
-      if (DEFAULT_PHRASES) {
-        client
-          .patch("api/localized_strings/update_default", {
-            default_strings: DEFAULT_PHRASES
-          })
-          .then(() => {
-            console.log(
-              chalk.green("Updated default phrases with", pathToDefault)
-            );
-          })
-          .catch(e => {
-            console.log(
-              chalk.red(
-                "An error has ocurred while updating your default phrases"
-              )
-            );
-            console.log(chalk.red(e.message));
-          });
-      }
-    }
-    const gitBranchIs = require("git-branch-is");
-    gitBranchIs(targetBranch).then(isTargetBranch => {
-      if (isTargetBranch) {
-        authenticateUser();
-      } else {
-        console.log(
-          chalk.blue(
-            "Skipped update to defaultPhrases because not currently on target branch"
-          )
-        );
-      }
-    });
   } else {
     console.log(chalk.red("Config file not found in ", polyglotConfig));
   }
